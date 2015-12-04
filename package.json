@@ -1,0 +1,30 @@
+{
+  "name": "pico-router",
+  "version": "1.0.0",
+  "description": "An incredibly tiny React router for isomorphic apps",
+  "main": "pico-router.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stolksdorf/pico-router.git"
+  },
+  "keywords": [
+    "router",
+    "react",
+    "isomorphic"
+  ],
+  "author": "stolksdorf",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stolksdorf/pico-router/issues"
+  },
+  "homepage": "https://github.com/stolksdorf/pico-router#readme",
+  "dependencies": {
+    "lodash": "^3.10.1",
+    "react": "^0.14.3",
+    "url": "^0.11.0",
+    "url-pattern": "^0.10.2"
+  }
+}
