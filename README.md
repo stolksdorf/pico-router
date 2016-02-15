@@ -9,6 +9,7 @@ As your project grows, it's easy to swap out to another more full-featured route
 
 **Features**
 
+* **Under 110 lines of code**
 * Very easy route -> function mapping
 * Uses [url-pattern](https://www.npmjs.com/package/url-pattern)-style url matching
 * Works on both client and server
@@ -79,7 +80,7 @@ Functions passed in the `routeMap` will be passed `args`, `query`, and `hash` as
 
 Returns a React component that will render to one of the passed in components in the current url matches any of the keys. Once mounted, the router component will update itself and re-render whenever the `history.pushState` changes.
 
-Takes two optional props of `initialUrl` and `url`. `initialUrl` will be used whenever the router can't retrieve the current url, eg. on initial mounting or server-side rendering. `url` is used to override what the router thinks the current url is.
+Takes three optional props of `initialUrl`, `scope`, and `url`. `initialUrl` will be used whenever the router can't retrieve the current url, eg. on initial mounting or server-side rendering. `url` is used to override what the router thinks the current url is. `scope` allows you to set the scope of the function calls of your route matching, useful if you have the props and state accessible.
 
 
 ### `pico-router.Link`

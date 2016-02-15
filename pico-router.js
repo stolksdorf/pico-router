@@ -60,6 +60,7 @@ var Router = {
 			getDefaultProps: function() {
 				return {
 					initialUrl : '/',
+					scope : this,
 					url : null  //Allows you to override the automatic currentUrl state
 				};
 			},
@@ -81,7 +82,7 @@ var Router = {
 				return _.reduce(this.routeMap, function(r, route){
 					if(r) return r;
 					var args = route.pattern.match(parsedUrl.pathname);
-					if(args) return route.handler(args, parsedUrl.query, parsedUrl.hash);
+					if(args) return route.handler.call(self.props.scope, args, parsedUrl.query, parsedUrl.hash);
 					return r;
 				}, null);
 			},
