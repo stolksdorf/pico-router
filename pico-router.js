@@ -78,6 +78,7 @@ var Router = {
 				}
 			}),
 			match : function(path){
+				var self = this;
 				var parsedUrl = Url.parse(path, true);
 				return _.reduce(this.routeMap, function(r, route){
 					if(r) return r;
