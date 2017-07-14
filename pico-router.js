@@ -86,12 +86,12 @@ const Router = {
 				}, null);
 			},
 			componentDidMount: function() {
-				window.onpopstate = function(evt){
+				window.onpopstate = (evt)=>{
 					if (evt && evt.state && evt.state.isoPath) {
 						window._onHistoryChange();
 					}
 				};
-				window._onHistoryChange = function(){
+				window._onHistoryChange = ()=>{
 					this.setState({ currentUrl : window.location.href })
 				}
 
