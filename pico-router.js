@@ -1,14 +1,15 @@
-var React = require('react');
-var _ = require('lodash');
-var Pattern = require('url-pattern');
-var Url = require('url');
+const React = require('react');
+const createClass = require('create-react-class');
+const _ = require('lodash');
+const Pattern = require('url-pattern');
+const Url = require('url');
 
-var onBrowser = (typeof window !== 'undefined');
-var hasHistorySupport = !!(typeof window !== 'undefined' && window.history && window.history.pushState);
-var handledRoutePatterns = [];
+const onBrowser = (typeof window !== 'undefined');
+const hasHistorySupport = !!(typeof window !== 'undefined' && window.history && window.history.pushState);
+const handledRoutePatterns = [];
 
-var Router = {
-	Link : React.createClass({
+const Router = {
+	Link : createClass({
 		getDefaultProps: function() {
 			return {
 				href : '',
@@ -25,22 +26,20 @@ var Router = {
 			return !!(this.props.href.match(/^https?\:/i) && !this.props.href.match(document.domain));
 		},
 		clickHandler : function(event){
-			var self = this;
 			if(this.props.onClick) this.props.onClick(event);
 			if(this.isModifiedEvent(event) || !this.isLeftClickEvent(event) || event.defaultPrevented || this.isExternal()) return;
 
-			var doesRouteMatch = _.any(handledRoutePatterns, function(routePattern){
-				return routePattern.match(self.props.href)
-			});
+			const doesRouteMatch = _.some(handledRoutePatterns, (routePattern)=>routePattern.match(this.props.href))
 			if(doesRouteMatch){
 				Router.navigate(this.props.href, this.props.forceReload)
 				event.preventDefault();
 			}
 		},
 		render : function(){
-			var newProps = Object.assign({}, this.props);
+			const newProps = Object.assign({}, this.props);
+			delete newProps.forceReload;
 			newProps.onClick = this.clickHandler;
-			return React.createElement('a', newProps)
+			return React.createElement('a', newProps);
 		},
 	}),
 
@@ -70,7 +69,7 @@ var Router = {
 				};
 			},
 			routeMap : _.map(routes, function(handler, route){
-				var pattern = new Pattern(route);
+				const pattern = new Pattern(route);
 				handledRoutePatterns.push(pattern);
 				return {
 					pattern : pattern,
@@ -78,24 +77,22 @@ var Router = {
 				}
 			}),
 			match : function(path){
-				var self = this;
-				var parsedUrl = Url.parse(path, true);
-				return _.reduce(this.routeMap, function(r, route){
+				const parsedUrl = Url.parse(path, true);
+				return _.reduce(this.routeMap, (r, route)=>{
 					if(r) return r;
-					var args = route.pattern.match(parsedUrl.pathname);
-					if(args) return route.handler.call(self.props.scope, args, parsedUrl.query, parsedUrl.hash);
+					const args = route.pattern.match(parsedUrl.pathname);
+					if(args) return route.handler.call(this.props.scope, args, parsedUrl.query, parsedUrl.hash);
 					return r;
 				}, null);
 			},
 			componentDidMount: function() {
-				var self = this;
 				window.onpopstate = function(evt){
 					if (evt && evt.state && evt.state.isoPath) {
 						window._onHistoryChange();
 					}
 				};
 				window._onHistoryChange = function(){
-					self.setState({ currentUrl : window.location.href })
+					this.setState({ currentUrl : window.location.href })
 				}
 
 				// Fixes a Safari bug?
