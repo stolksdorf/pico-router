@@ -55,7 +55,7 @@ const Router = {
 	},
 
 	createRouter : function(routes){
-		return React.createClass({
+		return createClass({
 			getDefaultProps: function() {
 				return {
 					initialUrl : '/',
