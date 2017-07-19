@@ -67,14 +67,15 @@ module.exports = React.createClass({
 `routeMap` is a key-value object where the keys are [url-pattern](https://www.npmjs.com/package/url-pattern)-style
 routes and the values are either React components or functions that return React components.
 
-Functions passed in the `routeMap` will be passed `args`, `query`, and `hash` as parameters. `args` and `query` are objects and `hash` is a string.
+Functions passed in the `routeMap` will be passed `args`, `query`, `hash`, and `url` as parameters. `args` and `query` are objects; `hash` and `url` is a string.
 
 ```javascript
 	//url -> '/users/fred/details?q=adv#main'
-	'/users/:id/:page' : function(args, query, hash){
+	'/users/:id/:page' : function(args, query, hash, url){
 		//args -> {id : 'fred', page : 'details'}
 		//query -> {q : 'adv'}
 		//hash -> '#main'
+		//url -> '/users/fred/details?q=adv#main'
 	}
 ```
 

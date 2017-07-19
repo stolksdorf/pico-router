@@ -81,7 +81,7 @@ const Router = {
 				return _.reduce(this.routeMap, (r, route)=>{
 					if(r) return r;
 					const args = route.pattern.match(parsedUrl.pathname);
-					if(args) return route.handler.call(this.props.scope, args, parsedUrl.query, parsedUrl.hash);
+					if(args) return route.handler.call(this.props.scope, args, parsedUrl.query, parsedUrl.hash, path);
 					return r;
 				}, null);
 			},

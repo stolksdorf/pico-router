@@ -1,6 +1,6 @@
 {
   "name": "pico-router",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "description": "An incredibly tiny React router for isomorphic apps",
   "main": "pico-router.js",
   "scripts": {
