@@ -26,15 +26,16 @@ As your project grows, it's easy to swap out to another more full-featured route
 
 ### Example main.jsx
 ```jsx
-var React = require('react');
-var CreateRouter = require('pico-router').createRouter;
-var Link = require('pico-router').Link;
+const React = require('react');
+const createClass = require('create-react-class');
+const CreateRouter = require('pico-router').createRouter;
+const Link = require('pico-router').Link;
 
-var UserPage = require('./user.jsx');
-var HomePage = require('./home.jsx');
-var SearchPage = require('./search.jsx');
+const UserPage = require('./user.jsx');
+const HomePage = require('./home.jsx');
+const SearchPage = require('./search.jsx');
 
-var Router = CreateRouter({
+const Router = CreateRouter({
 	'/' <HomePage />,
 	'/search' : function(args, query){
 		return <SearchPage term={query.q} />
@@ -44,7 +45,7 @@ var Router = CreateRouter({
 	}
 });
 
-module.exports = React.createClass({
+module.exports = createClass({
 	getDefaultProps: function() {
 		return {
 			url : '/'
@@ -56,7 +57,7 @@ module.exports = React.createClass({
 				<Link href='/'>Home</Link>
 				<Link href='/search' forceReload={true}>Search</Link>
 			</nav>
-			<Router initialUrl={this.props.url} />
+			<Router defaultUrl={this.props.url} />
 		</div>
 	},
 })
@@ -66,6 +67,30 @@ module.exports = React.createClass({
 
 `routeMap` is a key-value object where the keys are [url-pattern](https://www.npmjs.com/package/url-pattern)-style
 routes and the values are either React components or functions that return React components.
+
+Returns a React component that will render to one of the passed in components in the current url matches any of the keys. Once mounted, the router component will update itself and re-render whenever the `history.pushState` changes.
+
+```javascript
+const Router = CreateRouter({
+	'/' <HomePage />,
+	'/search' : function(args, query){
+		return <SearchPage term={query.q} />
+	},
+	'/user/:id' : function(args){
+		return <UserPage userId={arg.id} />
+	}
+});
+
+//...
+
+	render : function(){
+		return <div className='main'>
+			<Router defaultUrl={this.props.url} />
+		</div>
+	}
+});
+
+```
 
 Functions passed in the `routeMap` will be passed `args`, `query`, `hash`, and `url` as parameters. `args` and `query` are objects; `hash` and `url` is a string.
 
@@ -79,9 +104,18 @@ Functions passed in the `routeMap` will be passed `args`, `query`, `hash`, and `
 	}
 ```
 
-Returns a React component that will render to one of the passed in components in the current url matches any of the keys. Once mounted, the router component will update itself and re-render whenever the `history.pushState` changes.
+### `<Router />`
+Creating a router will return a React component that is used in your `render` function. The router can take 4 additional props:
 
-Takes three optional props of `initialUrl`, `scope`, and `url`. `initialUrl` will be used whenever the router can't retrieve the current url, eg. on initial mounting or server-side rendering. `url` is used to override what the router thinks the current url is. `scope` allows you to set the scope of the function calls of your route matching, useful if you have the props and state accessible.
+```javascript
+<Router
+	scope={this}       // Used as the scope for the route ampping functions. Useful if your route mapping needs props or state
+	defaultUrl={'/'}   // When not being rendered on the browser, this defines what url it should use.
+	nested={true}      // Nesting routers can run into race conditions with events firing. If you have a router rendering another router, the child router should have the nested prop set as true
+	forceUrl={'/test'} // Always forces the given url
+/>
+
+```
 
 
 ### `pico-router.Link`

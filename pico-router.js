@@ -8,6 +8,8 @@ const onBrowser = (typeof window !== 'undefined');
 const hasHistorySupport = !!(typeof window !== 'undefined' && window.history && window.history.pushState);
 const handledRoutePatterns = [];
 
+const EVENT_NAME = '__historyChange';
+
 const Router = {
 	Link : createClass({
 		getDefaultProps: function() {
@@ -47,7 +49,7 @@ const Router = {
 		if(onBrowser){
 			if (hasHistorySupport && !forceReload) {
 				history.pushState({ isoPath: path }, null, path);
-				window._onHistoryChange();
+				window.dispatchEvent(new Event(EVENT_NAME));
 				return;
 			}
 			window.location.href = path;
@@ -58,14 +60,10 @@ const Router = {
 		return createClass({
 			getDefaultProps: function() {
 				return {
-					initialUrl : '/',
-					scope : this,
-					url : null  //Allows you to override the automatic currentUrl state
-				};
-			},
-			getInitialState: function() {
-				return {
-					currentUrl : this.props.initialUrl
+					scope      : this,
+					defaultUrl : '/',
+					nested     : false,
+					forceUrl   : null
 				};
 			},
 			routeMap : _.map(routes, function(handler, route){
@@ -86,22 +84,22 @@ const Router = {
 				}, null);
 			},
 			componentDidMount: function() {
-				window.onpopstate = (evt)=>{
-					if (evt && evt.state && evt.state.isoPath) {
-						window._onHistoryChange();
-					}
-				};
-				window._onHistoryChange = ()=>{
-					this.setState({ currentUrl : window.location.href })
-				}
-
-				// Fixes a Safari bug?
-				if(hasHistorySupport) {
-					history.replaceState({ isoPath: window.location.pathname }, null);
-				}
+				if(hasHistorySupport) history.replaceState({ isoPath: window.location.pathname }, null);
+				if(this.props.nested) return;
+				window.addEventListener('popstate',this.onUrlChange);
+				window.addEventListener(EVENT_NAME, this.onUrlChange);
+			},
+			componentWillUnmount: function() {
+				window.removeEventListener('popstate', this.onUrlChange);
+				window.removeEventListener(EVENT_NAME, this.onUrlChange);
+			},
+			onUrlChange : function(){
+				this.forceUpdate();
 			},
 			render : function(){
-				return this.match(this.props.url || this.state.currentUrl)
+				if(this.props.forceUrl) return this.match(this.props.forceUrl);
+				if(!onBrowser) return this.match(this.props.defaultUrl);
+				return this.match(window.location.href);
 			},
 		})
 	}
