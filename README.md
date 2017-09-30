@@ -36,7 +36,7 @@ const HomePage = require('./home.jsx');
 const SearchPage = require('./search.jsx');
 
 const Router = CreateRouter({
-	'/' <HomePage />,
+	'/' : <HomePage />,
 	'/search' : function(args, query){
 		return <SearchPage term={query.q} />
 	},
@@ -72,7 +72,7 @@ Returns a React component that will render to one of the passed in components in
 
 ```javascript
 const Router = CreateRouter({
-	'/' <HomePage />,
+	'/' : <HomePage />,
 	'/search' : function(args, query){
 		return <SearchPage term={query.q} />
 	},
@@ -109,7 +109,7 @@ Creating a router will return a React component that is used in your `render` fu
 
 ```javascript
 <Router
-	scope={this}       // Used as the scope for the route ampping functions. Useful if your route mapping needs props or state
+	scope={this}       // Used as the scope for the route mapping functions. Useful if your route mapping needs props or state
 	defaultUrl={'/'}   // When not being rendered on the browser, this defines what url it should use.
 	nested={true}      // Nesting routers can run into race conditions with events firing. If you have a router rendering another router, the child router should have the nested prop set as true
 	forceUrl={'/test'} // Always forces the given url
@@ -130,4 +130,4 @@ If you wish to force standard behaviour, eg. a page reload, pass the prop `force
 
 ### `pico-router.navigate(path, forceReload)`
 
-If you need to update the url using `history.pushState` you can use this. It will trigger the router to rerender. Pass `true` as the second parameter to force the browser to reload at the path given.
+If you need to update the url using `history.pushState` you can use this. It will trigger the router to re-render. Pass `true` as the second parameter to force the browser to reload at the path given.
