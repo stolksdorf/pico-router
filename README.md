@@ -109,7 +109,7 @@ Creating a router will return a React component that is used in your `render` fu
 
 ```javascript
 <Router
-	scope={this}       // Used as the scope for the route ampping functions. Useful if your route mapping needs props or state
+	scope={this}       // Used as the scope for the route mapping functions. Useful if your route mapping needs props or state
 	defaultUrl={'/'}   // When not being rendered on the browser, this defines what url it should use.
 	nested={true}      // Nesting routers can run into race conditions with events firing. If you have a router rendering another router, the child router should have the nested prop set as true
 	forceUrl={'/test'} // Always forces the given url
