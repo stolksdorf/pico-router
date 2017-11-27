@@ -1,6 +1,6 @@
 {
   "name": "pico-router",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "An incredibly tiny React router for isomorphic apps",
   "main": "pico-router.js",
   "scripts": {
@@ -22,9 +22,9 @@
   },
   "homepage": "https://github.com/stolksdorf/pico-router#readme",
   "dependencies": {
-    "create-react-class": "^15.6.0",
+    "create-react-class": "^15.6.2",
     "lodash": "^4.17.4",
-    "react": "^15.6.1",
+    "react": "^16.1.1",
     "url": "^0.11.0",
     "url-pattern": "^1.0.3"
   }

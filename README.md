@@ -70,7 +70,7 @@ routes and the values are either React components or functions that return React
 
 Returns a React component that will render to one of the passed in components in the current url matches any of the keys. Once mounted, the router component will update itself and re-render whenever the `history.pushState` changes.
 
-```javascript
+```js
 const Router = CreateRouter({
 	'/' <HomePage />,
 	'/search' : function(args, query){
@@ -94,7 +94,7 @@ const Router = CreateRouter({
 
 Functions passed in the `routeMap` will be passed `args`, `query`, `hash`, and `url` as parameters. `args` and `query` are objects; `hash` and `url` is a string.
 
-```javascript
+```js
 	//url -> '/users/fred/details?q=adv#main'
 	'/users/:id/:page' : function(args, query, hash, url){
 		//args -> {id : 'fred', page : 'details'}
@@ -107,7 +107,7 @@ Functions passed in the `routeMap` will be passed `args`, `query`, `hash`, and `
 ### `<Router />`
 Creating a router will return a React component that is used in your `render` function. The router can take 4 additional props:
 
-```javascript
+```js
 <Router
 	scope={this}       // Used as the scope for the route ampping functions. Useful if your route mapping needs props or state
 	defaultUrl={'/'}   // When not being rendered on the browser, this defines what url it should use.
@@ -124,10 +124,16 @@ Creating a router will return a React component that is used in your `render` fu
 
 If you wish to force standard behaviour, eg. a page reload, pass the prop `forceReload={true}`
 
-```javascript
+```js
 <Link href='/update' forceReload={true}>Update Page</Link>
 ```
 
 ### `pico-router.navigate(path, forceReload)`
 
 If you need to update the url using `history.pushState` you can use this. It will trigger the router to rerender. Pass `true` as the second parameter to force the browser to reload at the path given.
+
+### `pico-router.onUrlChange(handler)`
+Adds two event listeners on the `window` object for `popstate` and `pico-router`'s internal url update event, `__historyChange`. Fires whenever the url updates either by the user (by navigating back), or by clicking a `pico-router` Link.
+
+### `pico-router.removeListener(handler)`
+Removes the two event listeners on the `window` object.

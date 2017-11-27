@@ -56,6 +56,17 @@ const Router = {
 		}
 	},
 
+	onUrlChange : function(handler){
+		if(typeof window === 'undefined') return;
+		window.addEventListener('popstate',handler);
+		window.addEventListener(EVENT_NAME, handler);
+	},
+	removeListener : function(handler){
+		if(typeof window === 'undefined') return;
+		window.removeEventListener('popstate',handler);
+		window.removeEventListener(EVENT_NAME, handler);
+	},
+
 	createRouter : function(routes){
 		return createClass({
 			getDefaultProps: function() {
@@ -86,14 +97,12 @@ const Router = {
 			componentDidMount: function() {
 				if(hasHistorySupport) history.replaceState({ isoPath: window.location.pathname }, null);
 				if(this.props.nested) return;
-				window.addEventListener('popstate',this.onUrlChange);
-				window.addEventListener(EVENT_NAME, this.onUrlChange);
+				Router.onUrlChange(this.handleUrlChange);
 			},
 			componentWillUnmount: function() {
-				window.removeEventListener('popstate', this.onUrlChange);
-				window.removeEventListener(EVENT_NAME, this.onUrlChange);
+				Router.removeListener(this.handleUrlChange);
 			},
-			onUrlChange : function(){
+			handleUrlChange : function(){
 				this.forceUpdate();
 			},
 			render : function(){
