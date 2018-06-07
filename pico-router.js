@@ -8,15 +8,18 @@ const onBrowser         = (typeof window !== 'undefined');
 const hasHistorySupport = !!(typeof window !== 'undefined' && window.history && window.history.pushState);
 const isRegularClick    = (event)=>event.button === 0 && !(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 const isExternalRoute   = (href) =>!!(href.match(/^https?\:/i) && !href.match(document.domain));
+const isHandledRoute    = (href)=>!!handledRoutePatterns.find((routePattern)=>routePattern.match(href))
+
 
 let handledRoutePatterns = [];
 
 let Router = {
 	navigate : (path, forceReload)=>{
 		if(!onBrowser) return;
-		if(hasHistorySupport && !forceReload){
+		if(hasHistorySupport && !forceReload && !isExternalRoute(path)){
 			history.pushState({ isoPath: path }, null, path);
 			window.dispatchEvent(new Event(EVENT_NAME));
+			return;
 		}
 		window.location.href = path;
 	},
@@ -41,7 +44,7 @@ Router.Link = createClass({
 	clickHandler(event){
 		if(this.props.onClick) this.props.onClick(event);
 		if(!isRegularClick(event) || isExternalRoute(this.props.href)) return;
-		const doesRouteMatch = !!handledRoutePatterns.find((routePattern)=>routePattern.match(this.props.href));
+		const doesRouteMatch = isHandledRoute(this.props.href);
 		if(doesRouteMatch){
 			Router.navigate(this.props.href, this.props.forceReload)
 			event.preventDefault();
@@ -92,8 +95,9 @@ Router.createRouter = (routes)=>{
 			this.forceUpdate();
 		},
 		render(){
-			let routeToMatch = window.location.href;
-			if(!onBrowser)          routeToMatch = this.props.defaultUrl;
+			let routeToMatch = (onBrowser
+				? window.location.href
+				: this.props.defaultUrl);
 			if(this.props.forceUrl) routeToMatch = this.props.forceUrl;
 			return this.match(routeToMatch);
 		},
