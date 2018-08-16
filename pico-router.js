@@ -59,6 +59,7 @@ Router.Link = createClass({
 });
 Router.createRouter = (routes)=>{
 	const RouteMap = Object.keys(routes).map((route)=>{
+		if(route == '*') throw 'Pico-router: Wild card route matching should be handled server-side';
 		const pattern = new Pattern(route);
 		const handler = routes[route];
 		handledRoutePatterns.push(pattern);
@@ -95,11 +96,10 @@ Router.createRouter = (routes)=>{
 			this.forceUpdate();
 		},
 		render(){
-			let routeToMatch = (onBrowser
+			if(this.props.forceUrl) return this.match(this.props.forceUrl);
+			return this.match(onBrowser
 				? window.location.href
 				: this.props.defaultUrl);
-			if(this.props.forceUrl) routeToMatch = this.props.forceUrl;
-			return this.match(routeToMatch);
 		},
 	});
 };
