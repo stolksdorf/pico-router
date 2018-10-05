@@ -1,4 +1,4 @@
-# pico-router
+# 🔀 pico-router
 An incredibly tiny React router for isomorphic apps. **Under 110 lines of code**
 
 [![NPM](https://nodei.co/npm/pico-router.png)](https://nodei.co/npm/pico-router/)
@@ -37,21 +37,21 @@ const SearchPage = require('./search.jsx');
 
 const Router = CreateRouter({
 	'/' <HomePage />,
-	'/search' : function(args, query){
+	'/search' : (args, query)=>{
 		return <SearchPage term={query.q} />
 	},
-	'/user/:id' : function(args){
+	'/user/:id' : (args)=>{
 		return <UserPage userId={arg.id} />
 	}
 });
 
 module.exports = createClass({
-	getDefaultProps: function() {
+	getDefaultProp() {
 		return {
 			url : '/'
 		};
 	},
-	render : function(){
+	render(){
 		return <div className='main'>
 			<nav>
 				<Link href='/'>Home</Link>
@@ -72,18 +72,18 @@ Returns a React component that will render to one of the passed in components in
 
 ```js
 const Router = CreateRouter({
-	'/' <HomePage />,
-	'/search' : function(args, query){
+	'/' : <HomePage />,
+	'/search' : (args, query)=>{
 		return <SearchPage term={query.q} />
 	},
-	'/user/:id' : function(args){
+	'/user/:id' : (args)=>{
 		return <UserPage userId={arg.id} />
 	}
 });
 
 //...
 
-	render : function(){
+	render(){
 		return <div className='main'>
 			<Router defaultUrl={this.props.url} />
 		</div>
@@ -109,7 +109,7 @@ Creating a router will return a React component that is used in your `render` fu
 
 ```js
 <Router
-	scope={this}       // Used as the scope for the route ampping functions. Useful if your route mapping needs props or state
+	scope={this}       // Used as the scope for the route mapping functions. Useful if your route mapping needs props or state
 	defaultUrl={'/'}   // When not being rendered on the browser, this defines what url it should use.
 	nested={true}      // Nesting routers can run into race conditions with events firing. If you have a router rendering another router, the child router should have the nested prop set as true
 	forceUrl={'/test'} // Always forces the given url
@@ -128,9 +128,9 @@ If you wish to force standard behaviour, eg. a page reload, pass the prop `force
 <Link href='/update' forceReload={true}>Update Page</Link>
 ```
 
-### `pico-router.navigate(path, forceReload)`
+### `pico-router.navigate(path, forceReload=false)`
 
-If you need to update the url using `history.pushState` you can use this. It will trigger the router to rerender. Pass `true` as the second parameter to force the browser to reload at the path given.
+If you need to update the url using `history.pushState` you can use this. It will trigger the router to re-render. Pass `true` as the second parameter to force the browser to reload at the path given.
 
 ### `pico-router.onUrlChange(handler)`
 Adds two event listeners on the `window` object for `popstate` and `pico-router`'s internal url update event, `__historyChange`. Fires whenever the url updates either by the user (by navigating back), or by clicking a `pico-router` Link.

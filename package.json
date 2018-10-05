@@ -1,10 +1,11 @@
 {
   "name": "pico-router",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "An incredibly tiny React router for isomorphic apps",
   "main": "pico-router.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "pico-check -v",
+    "test:dev": "pico-check -v -w"
   },
   "repository": {
     "type": "git",
@@ -30,7 +31,9 @@
     "react": "^16.1.1"
   },
   "devDependencies": {
-    "pico-check": "^1.0.4",
-    "react-test-renderer": "^16.3.2"
+    "create-react-class": "^15.6.3",
+    "pico-check": "^1.1.1",
+    "react": "^16.5.2",
+    "react-test-renderer": "^16.5.2"
   }
 }

@@ -10,7 +10,6 @@ const isRegularClick    = (event)=>event.button === 0 && !(event.metaKey || even
 const isExternalRoute   = (href) =>!!(href.match(/^https?\:/i) && !href.match(document.domain));
 const isHandledRoute    = (href)=>!!handledRoutePatterns.find((routePattern)=>routePattern.match(href))
 
-
 let handledRoutePatterns = [];
 
 let Router = {
@@ -60,6 +59,7 @@ Router.Link = createClass({
 Router.createRouter = (routes)=>{
 	const RouteMap = Object.keys(routes).map((route)=>{
 		if(route == '*') throw 'Pico-router: Wild card route matching should be handled server-side';
+		if(route == 'undefined') throw `Pico-router: You have passed 'undefined' as a route pattern.\nCheck route for ${routes[route]}`;
 		const pattern = new Pattern(route);
 		const handler = routes[route];
 		handledRoutePatterns.push(pattern);
