@@ -56,19 +56,14 @@ Router.Link = createClass({
 		return React.createElement('a', newProps);
 	},
 });
-Router.createRouter = (routes)=>{
-	const RouteMap = Object.keys(routes).map((route)=>{
-		if(route == '*') throw 'Pico-router: Wild card route matching should be handled server-side';
-		if(route == 'undefined') throw `Pico-router: You have passed 'undefined' as a route pattern.\nCheck route for ${routes[route]}`;
-		const pattern = new Pattern(route);
-		const handler = routes[route];
-		handledRoutePatterns.push(pattern);
-		return {
-			pattern,
-			handler : (typeof handler == 'function' ? handler : ()=>handler)
+Router.createRouter = (routes, opts={})=>{
+	opts = Object.assign({
+		fallback : (path)=>{
+			throw `Pico-router: Could not find matching route for '${path}'`;
 		}
-	});
-	return createClass({
+	}, opts);
+
+	const RouterComponent =  createClass({
 		getDefaultProps() {
 			return {
 				scope      : this,
@@ -76,13 +71,6 @@ Router.createRouter = (routes)=>{
 				nested     : false,
 				forceUrl   : null
 			};
-		},
-		match(path){
-			const parsedUrl = Url.parse(path, true);
-			const matchedRoute = RouteMap.find((route)=>route.pattern.match(parsedUrl.pathname));
-			if(!matchedRoute) throw `Pico-router: Could not find matching route for '${path}'`;
-			const args = matchedRoute.pattern.match(parsedUrl.pathname);
-			return matchedRoute.handler.call(this.props.scope, args, parsedUrl.query, parsedUrl.hash, path);
 		},
 		componentDidMount(){
 			if(hasHistorySupport) history.replaceState({ isoPath: window.location.pathname }, null);
@@ -95,12 +83,35 @@ Router.createRouter = (routes)=>{
 		handleUrlChange(){
 			this.forceUpdate();
 		},
+		getUrl(){
+			if(this.props.forceUrl) return this.props.forceUrl;
+			if(onBrowser) return window.location.href;
+			return this.props.defaultUrl;
+		},
 		render(){
-			if(this.props.forceUrl) return this.match(this.props.forceUrl);
-			return this.match(onBrowser
-				? window.location.href
-				: this.props.defaultUrl);
+			return RouterComponent.execute(this.getUrl());
 		},
 	});
+
+	RouterComponent.routeMap = Object.keys(routes).map((route)=>{
+		if(route == '*') throw 'Pico-router: Wild card route matching should be handled server-side';
+		if(route == 'undefined') throw `Pico-router: You have passed 'undefined' as a route pattern.\nCheck route for ${routes[route]}`;
+		const pattern = new Pattern(`${route}(/)`);
+		const handler = routes[route];
+		handledRoutePatterns.push(pattern);
+		return {
+			pattern,
+			handler : (typeof handler == 'function' ? handler : ()=>handler)
+		}
+	});
+	RouterComponent.execute = (path, scope=this)=>{
+		const parsedUrl = Url.parse(path, true);
+		const matchedRoute = RouterComponent.routeMap.find((route)=>route.pattern.match(parsedUrl.pathname));
+		if(!matchedRoute) return opts.fallback(path);
+		const args = matchedRoute.pattern.match(parsedUrl.pathname);
+		return matchedRoute.handler.call(scope, args, parsedUrl.query, parsedUrl.hash, path);
+	}
+
+	return RouterComponent;
 };
 module.exports = Router;

@@ -9,7 +9,7 @@ As your project grows, it's easy to swap out to another more full-featured route
 
 **Features**
 
-* **Under 110 lines of code**
+* **Under 120 lines of code**
 * Very easy route -> function mapping
 * Uses [url-pattern](https://www.npmjs.com/package/url-pattern)-style url matching
 * Works on both client and server
@@ -63,7 +63,7 @@ module.exports = createClass({
 })
 ```
 
-### `pico-router.createRouter(routeMap)`
+### `pico-router.createRouter(routeMap, [opts])`
 
 `routeMap` is a key-value object where the keys are [url-pattern](https://www.npmjs.com/package/url-pattern)-style
 routes and the values are either React components or functions that return React components.
@@ -103,6 +103,19 @@ Functions passed in the `routeMap` will be passed `args`, `query`, `hash`, and `
 		//url -> '/users/fred/details?q=adv#main'
 	}
 ```
+
+#### `opts`
+```js
+// Defaults
+{
+	// If a path is not matched, Pico-router will execute this function.
+	fallback : (path)=>{
+		throw `Pico-router: Could not find matching route for '${path}'`;
+	}
+}
+```
+
+
 
 ### `<Router />`
 Creating a router will return a React component that is used in your `render` function. The router can take 4 additional props:
