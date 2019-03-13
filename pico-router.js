@@ -114,4 +114,5 @@ Router.createRouter = (routes, opts={})=>{
 
 	return RouterComponent;
 };
+Router.CreateRouter = Router.createRouter;
 module.exports = Router;

@@ -17,53 +17,40 @@ As your project grows, it's easy to swap out to another more full-featured route
 * Included Link component (anchor tag replacement) to use history pushstate
 
 **Anti-Features** (features removed to reduce complexity)
-
-* No nested route matching
 * No built-in redirects
 * If pushstate isn't supported it *does not* fall back to hash fragments. Falls back to standard anchor tag behaviour.
 
 
 
 ### Example main.jsx
-```jsx
+```js
 const React = require('react');
-const createClass = require('create-react-class');
-const CreateRouter = require('pico-router').createRouter;
-const Link = require('pico-router').Link;
+const {CreateRouter, Link} = require('pico-router');
 
 const UserPage = require('./user.jsx');
 const HomePage = require('./home.jsx');
 const SearchPage = require('./search.jsx');
 
 const Router = CreateRouter({
-	'/' <HomePage />,
-	'/search' : (args, query)=>{
-		return <SearchPage term={query.q} />
-	},
+	'/'       : <HomePage />,
+	'/search' : (args, query)=> <SearchPage term={query.q} />,
 	'/user/:id' : (args)=>{
 		return <UserPage userId={arg.id} />
 	}
 });
 
-module.exports = createClass({
-	getDefaultProp() {
-		return {
-			url : '/'
-		};
-	},
-	render(){
-		return <div className='main'>
-			<nav>
-				<Link href='/'>Home</Link>
-				<Link href='/search' forceReload={true}>Search</Link>
-			</nav>
-			<Router defaultUrl={this.props.url} />
-		</div>
-	},
-})
+function Main({url : '/'}){
+	return <div className='Main'>
+		<nav>
+			<Link href='/'>Home</Link>
+			<Link href='/search' forceReload={true}>Search</Link>
+		</nav>
+		<Router defaultUrl={this.props.url} />
+	</div>
+}
 ```
 
-### `pico-router.createRouter(routeMap, [opts])`
+### `pico-router.CreateRouter(routeMap, [opts])`
 
 `routeMap` is a key-value object where the keys are [url-pattern](https://www.npmjs.com/package/url-pattern)-style
 routes and the values are either React components or functions that return React components.
@@ -72,10 +59,8 @@ Returns a React component that will render to one of the passed in components in
 
 ```js
 const Router = CreateRouter({
-	'/' : <HomePage />,
-	'/search' : (args, query)=>{
-		return <SearchPage term={query.q} />
-	},
+	'/'       : <HomePage />,
+	'/search' : (args, query)=> <SearchPage term={query.q} />,
 	'/user/:id' : (args)=>{
 		return <UserPage userId={arg.id} />
 	}
@@ -83,11 +68,9 @@ const Router = CreateRouter({
 
 //...
 
-	render(){
-		return <div className='main'>
-			<Router defaultUrl={this.props.url} />
-		</div>
-	}
+	return <div className='main'>
+		<Router defaultUrl={this.props.url} />
+	</div>
 });
 
 ```
