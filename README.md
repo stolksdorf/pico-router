@@ -39,7 +39,7 @@ const Router = CreateRouter({
 	}
 });
 
-function Main({url : '/'}){
+function Main({url = '/'}){
 	return <div className='Main'>
 		<nav>
 			<Link href='/'>Home</Link>
