@@ -1,7 +1,10 @@
 const test = require('pico-check');
+
+const React = require('react');
+const render = (comp, props) => require('react-test-renderer').create(React.createElement(comp, props)).toJSON();
+
 const Router = require('../pico-router.js');
 
-const Pattern     = require('url-pattern');
 
 
 test('undefined route names should throw', (t)=>{
@@ -49,6 +52,32 @@ test('custom fallback should trigger', (t)=>{
 
 	t.ok(router.execute('/test'));
 	t.is(router.execute('/notFoundRoute'), 'fallback');
+});
+
+test.group('rendering', (test)=>{
+
+	test('base', (t)=>{
+		const routerComp = Router.createRouter({
+			'/test' : React.createElement('div', {}, 'works')
+		});
+
+		let res = render(routerComp, {defaultUrl : '/test'});
+
+		t.is(res.type, 'div');
+		t.is(res.children[0], 'works');
+	});
+
+	test('missing route', (t)=>{
+		const routerComp = Router.createRouter({
+			'/test' : React.createElement('div', {}, 'works')
+		});
+
+		t.throws(()=>{
+			let res = render(routerComp, {defaultUrl : '/nope'});
+		})
+	});
+
+
 })
 
 
