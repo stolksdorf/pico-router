@@ -53,7 +53,7 @@ function Link({ href, onClick, forceReload=false, ...props }){
 	}, props));
 };
 
-const createRouter(routes, opts={})=>{
+const createRouter = (routes, opts={})=>{
 	opts = Object.assign({
 		fallback : (path)=>{ throw `Pico-router: Could not find matching route for '${path}'`; }
 	}, opts);
@@ -92,9 +92,12 @@ const createRouter(routes, opts={})=>{
 			if(forceUrl) return forceUrl;
 			if(onBrowser) return window.location.href;
 			return defaultUrl;
-		},
+		};
 		return execute(getUrl());
 	};
+
+	RouterComponent.execute = execute;
+	RouterComponent.routeMap = routeMap;
 
 	return RouterComponent;
 };
