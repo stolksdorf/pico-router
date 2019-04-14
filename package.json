@@ -31,7 +31,6 @@
     "react": "^16.1.1"
   },
   "devDependencies": {
-    "create-react-class": "^15.6.3",
     "pico-check": "^1.2.1",
     "react": "^16.5.2",
     "react-test-renderer": "^16.5.2"
