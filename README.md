@@ -94,7 +94,9 @@ Functions passed in the `routeMap` will be passed `args`, `query`, `hash`, and `
 	// If a path is not matched, Pico-router will execute this function.
 	fallback : (path)=>{
 		throw `Pico-router: Could not find matching route for '${path}'`;
-	}
+	},
+	// Will add this string at the front of each url
+	prefix : ''
 }
 ```
 

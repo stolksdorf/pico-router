@@ -1,6 +1,6 @@
 {
   "name": "pico-router",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "An incredibly tiny React router for isomorphic apps",
   "main": "pico-router.js",
   "scripts": {
@@ -11,7 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/stolksdorf/pico-router.git"
   },
-  "files": ["pico-router.js"],
+  "files": [
+    "pico-router.js"
+  ],
   "keywords": [
     "router",
     "react",
@@ -31,6 +33,8 @@
     "react": "^16.8.6"
   },
   "devDependencies": {
+    "browserify": "^16.4.0",
+    "express": "^4.17.1",
     "pico-check": "^1.2.1",
     "react-test-renderer": "^16.8.6"
   }
