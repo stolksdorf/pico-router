@@ -36,6 +36,7 @@
     "browserify": "^16.4.0",
     "express": "^4.17.1",
     "pico-check": "^1.2.1",
+    "react-dom": "^16.8.6",
     "react-test-renderer": "^16.8.6"
   }
 }

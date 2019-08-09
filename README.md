@@ -23,7 +23,7 @@ As your project grows, it's easy to swap out to another more full-featured route
 
 
 ### Example main.jsx
-```js
+```jsx
 const React = require('react');
 const {CreateRouter, Link} = require('pico-router');
 
@@ -129,6 +129,8 @@ If you wish to force standard behaviour, eg. a page reload, pass the prop `force
 ### `pico-router.navigate(path, forceReload=false)`
 
 If you need to update the url using `history.pushState` you can use this. It will trigger the router to re-render. Pass `true` as the second parameter to force the browser to reload at the path given.
+
+//Returns `true` if it was able to successfully
 
 ### `pico-router.onUrlChange(handler)`
 Adds two event listeners on the `window` object for `popstate` and `pico-router`'s internal url update event, `__historyChange`. Fires whenever the url updates either by the user (by navigating back), or by clicking a `pico-router` Link.
