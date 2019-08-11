@@ -8,21 +8,19 @@ const MainRouter = CreateRouter({
 	'/test' : ()=>'test',
 	'/sub*' : (args)=>{
 		//console.log(args);
-		return <SubRouter />;
+		return <div> sub router <SubRouter /> </div>;
 	},
-	'*' : ()=>'fallback'
+	//'*' : ()=>'fallback'
 }, { name : 'main', index : 0 });
 
 const SubRouter = CreateRouter({
 	''      : ()=>'sub',
 	'/nest' : ()=>'sub-nest',
-	'*'     : ()=>'sub-fallback'
+	//'*'     : ()=>'sub-fallback'
 }, { prefix : '/sub', name : 'sub', index : 1 });
 
-
-
 const Component = (props)=>{
-	setServerSideUrl(props.url);
+	//setServerSideUrl(props.url);
 	console.log(props);
 	return <div>
 		<Link href='/'>root</Link> <br />
@@ -37,11 +35,14 @@ const Component = (props)=>{
 
 		<hr />
 
-		<MainRouter name='main' />
+		<MainRouter name='main' serverSideUrl={props.url} />
 
 		<hr />
 
 		<MainRouter name='main' />
+
+		<hr />
+
 
 	</div>
 
