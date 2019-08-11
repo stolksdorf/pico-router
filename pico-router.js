@@ -26,11 +26,17 @@ let ServerSideUrl = '/';
 
 const getUrl = ()=>onBrowser ? window.location.pathname : ServerSideUrl;
 
+//todo: maybe set a global fallback?
+
 const Router = {
 	navigate : (path, forceReload)=>{
 		if(!onBrowser) return;
 		if(hasHistorySupport && !forceReload && !isExternalRoute(path)){
 			history.pushState({ isoPath : path }, null, path);
+
+			//FIXME: I need to figure out how fallbacks will work
+			//
+
 			if(UrlChangeHandler()) return; //If it ran successfully, stop
 		}
 		window.location.pathname = path;
@@ -51,22 +57,20 @@ const Router = {
 const routers = [];
 
 
+// const UrlChangeHandler = ()=>{
+// 	const bestRouter = routers.find((router)=>hasMatch(router.routes, getUrl()));
+// 	if(bestRouter){
+// 		bestRouter.update(getUrl());
+// 		return true;
+// 	}
+// 	return false;
+// };
+
 const UrlChangeHandler = ()=>{
-	const bestRouter = routers.find((router)=>hasMatch(router.routes, getUrl()));
-	// const bestRouter = routers.reduce((acc, router)=>{
-	// 	console.log(router);
-	// 	if(router.index > acc.index && match(router.routes, getUrl())){
-	// 		return router;
-	// 	}
-	// 	return acc;
-	// }, { index : -1 });
-	console.log('best Router', bestRouter);
-	if(bestRouter){
-		bestRouter.update(getUrl());
-		return true;
-	}
-	return false;
+	routers.map((router)=>router.update(getUrl()));
+	return true;
 };
+
 
 if(onBrowser){
 	window.addEventListener('popstate', UrlChangeHandler);
@@ -79,32 +83,16 @@ function Link({ href, onClick, forceReload = false, ...props }){
 		onClick : (evt)=>{
 			if(onClick) onClick(evt);
 			if(!isRegularClick(evt) || isExternalRoute(href)) return;
-
 			Router.navigate(href, forceReload);
 			evt.preventDefault();
-
-			// const router = findValidRouter(href);
-			// if(router){
-			// 	router.render(href);
-			// 	evt.preventDefault();
-			// }
-			// router
-			// 	? router.render(href)
-			// 	:
-
-			// //const doesRouteMatch = isHandledRoute(href);
-			// //if(doesRouteMatch){
-			// Router.navigate(href, forceReload);
-
-			//}
 		},
 		href,
 	}, props));
 };
 
-const findValidRouter = (href)=>{
-	return routers.find((router)=>hasMatch(router.routes, getUrl()));
-};
+// const findValidRouter = (href)=>{
+// 	return routers.find((router)=>hasMatch(router.routes, getUrl()));
+// };
 
 //const regRouters = [];
 
@@ -144,7 +132,9 @@ const createRouter = (routes, opts = {})=>{
 
 	const routeMap = map(routes, (handler, route)=>{
 		//const fullroute = opts.prefix + route;
-		if(route == '*') throw 'Pico-router: Wild card route matching should be handled server-side';
+
+		//TODO: allow wildcard with opt
+		//if(route == '*') throw 'Pico-router: Wild card route matching should be handled server-side';
 		if(route == 'undefined') throw `Pico-router: You have passed 'undefined' as a route pattern.\nCheck route for ${routes[route]}`;
 		const pattern = new Pattern(`${opts.prefix}${route}(/)`);
 		//handledRoutePatterns.push(pattern);
@@ -154,6 +144,7 @@ const createRouter = (routes, opts = {})=>{
 		};
 	});
 
+	//TODO: does this have to be outside?
 	const execute = (path, scope = this)=>{
 		const parsedUrl = Url.parse(path, true);
 		// const matchedRoute = routeMap.find((route)=>route.pattern.match(parsedUrl.pathname));
@@ -161,7 +152,9 @@ const createRouter = (routes, opts = {})=>{
 
 		const matchedRoute = hasMatch(routeMap, parsedUrl);
 
-		if(!matchedRoute) return opts.fallback(path);
+		if(!matchedRoute) return null;
+
+		//if(!matchedRoute) return opts.fallback(path);
 		//console.log('MATCH', matchedRoute, matchedRoute.handler);
 		const args = matchedRoute.pattern.match(parsedUrl.pathname);
 		return matchedRoute.handler.call(scope, { args, path, ...parsedUrl });
@@ -176,15 +169,18 @@ const createRouter = (routes, opts = {})=>{
 
 		const [url, setUrl] = React.useState(getUrl);
 
+		//TODO: Instead save the execution Function
+
+
 		//const registered = React.useRef(false);
 
-		console.log('------------------------');
-		console.log('START RENDER', opts.name, hasRouter(routerId));
+		// console.log('------------------------');
+		// console.log('START RENDER', opts.name, hasRouter(routerId));
 
-		console.log('onbrowser', onBrowser, onBrowser ? getUrl() : '');
-		console.log('using url', url);
+		// console.log('onbrowser', onBrowser, onBrowser ? getUrl() : '');
+		// console.log('using url', url);
 
-		//possibly move this into the on mount
+		//TODO: possibly move this into the on mount
 		if(!hasRouter(routerId)){
 			console.log('adding ', routerId, opts.name);
 			routers.unshift({

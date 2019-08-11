@@ -1,38 +1,31 @@
-const express = require('express');
-const app = express();
-const browserify = require('browserify');
+const ReactDOMServer = require('react-dom/server'), React = require('react'), browserify = require('browserify');
 
-
-const ReactDOMServer = require('react-dom/server');
-const React = require('react');
-
-const TestClient = require('./test.client.js');
-const render = (props, code)=>{
-	const component = ReactDOMServer.renderToString(React.createElement(TestClient.Component, props));
+const pack = (bundler)=>new Promise((res, rej)=>bundler.bundle((err, buf)=>err ? rej(err) : res(buf.toString())));
+const getBundler = (componentPath, opts = {})=>{
+	return browserify({ standalone : 'Root', cache : {}, ...opts }).external('react').require(componentPath)
+		.transform('babelify', { presets : ['@babel/preset-react'] });
+};
+let libs;
+const render = async (bundler, props)=>{
+	const bundle = await pack(bundler);
+	if(!libs) libs = await pack(browserify().require(['react', 'react-dom']));
 	return `<html>
-	<body><main id='root'>${component}</main></body>
-	<script>${code}</script>
-	<script>
-		console.log(test);
-		test.hydrate(${JSON.stringify(props)});
-	</script>
-
+	<body><main id='root'>${ReactDOMServer.renderToString(React.createElement(eval(`module=undefined;${bundle};global.Root`), props))}</main></body>
+	<script>${libs};${bundle}</script>
+	<script>require('react-dom').hydrate(require('react').createElement(Root, ${JSON.stringify(props)}),document.getElementById('root'));</script>
 	</html>`;
 };
+const build = async (componentPath, props = {})=>render(getBundler(componentPath, props), props);
 
 
-const bundle = ()=>{
-	return new Promise((resolve, reject)=>{
-		return browserify({ standalone : 'test' })
-			.add('./tests/test.client.js')
-			.bundle((err, buf)=>err ? reject(err) : resolve(buf.toString()));
-	});
-};
+
+const express = require('express');
+const app = express();
 
 app.all('*', (req, res)=>{
 	if(req.url == '/favicon.ico') return res.send('ok');
-	bundle().then((code)=>{
-		return res.send(render({ url : req.url }, code));
+	build('./tests/test.client.jsx', {url : req.url}).then((code)=>{
+		return res.send(code);
 	});
 });
 app.listen(8000);
