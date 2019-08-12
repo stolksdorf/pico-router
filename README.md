@@ -1,5 +1,5 @@
 # 🔀 pico-router
-An incredibly tiny React router for isomorphic apps. **Under 110 lines of code**
+An incredibly tiny React router for isomorphic apps. **Under 100 lines of code**
 
 [![NPM](https://nodei.co/npm/pico-router.png)](https://nodei.co/npm/pico-router/)
 
@@ -9,10 +9,10 @@ As your project grows, it's easy to swap out to another more full-featured route
 
 **Features**
 
-* **Under 120 lines of code**
+* **Under 100 lines of code**
 * Very easy route -> function mapping
 * Uses [url-pattern](https://www.npmjs.com/package/url-pattern)-style url matching
-* Works on both client and server
+* Works on both client and server for server-side rendering
 * Uses history pushstate for instant page transitions
 * Included Link component (anchor tag replacement) to use history pushstate
 
@@ -33,8 +33,8 @@ const SearchPage = require('./search.jsx');
 
 const Router = CreateRouter({
 	'/'       : <HomePage />,
-	'/search' : (args, query)=> <SearchPage term={query.q} />,
-	'/user/:id' : (args)=>{
+	'/search' : ({args, query})=> <SearchPage term={query.q} />,
+	'/user/:id' : ({args})=>{
 		return <UserPage userId={arg.id} />
 	}
 });
@@ -45,7 +45,7 @@ function Main({url = '/'}){
 			<Link href='/'>Home</Link>
 			<Link href='/search' forceReload={true}>Search</Link>
 		</nav>
-		<Router defaultUrl={this.props.url} />
+		<Router serverSideUrl={url} />
 	</div>
 }
 ```
@@ -60,8 +60,8 @@ Returns a React component that will render to one of the passed in components in
 ```js
 const Router = CreateRouter({
 	'/'       : <HomePage />,
-	'/search' : (args, query)=> <SearchPage term={query.q} />,
-	'/user/:id' : (args)=>{
+	'/search' : ({args, query})=> <SearchPage term={query.q} />,
+	'/user/:id' : ({args})=>{
 		return <UserPage userId={arg.id} />
 	}
 });
@@ -69,7 +69,7 @@ const Router = CreateRouter({
 //...
 
 	return <div className='main'>
-		<Router defaultUrl={this.props.url} />
+		<Router serverSideUrl={this.props.url} />
 	</div>
 });
 
@@ -79,7 +79,7 @@ Functions passed in the `routeMap` will be passed `args`, `query`, `hash`, and `
 
 ```js
 	//url -> '/users/fred/details?q=adv#main'
-	'/users/:id/:page' : function(args, query, hash, url){
+	'/users/:id/:page' : function({args, query, hash, url}){
 		//args -> {id : 'fred', page : 'details'}
 		//query -> {q : 'adv'}
 		//hash -> '#main'
@@ -89,12 +89,8 @@ Functions passed in the `routeMap` will be passed `args`, `query`, `hash`, and `
 
 #### `opts`
 ```js
-// Defaults
 {
-	// If a path is not matched, Pico-router will execute this function.
-	fallback : (path)=>{
-		throw `Pico-router: Could not find matching route for '${path}'`;
-	}
+	prefix : '' // Will add this string at the front of each url
 }
 ```
 
@@ -104,13 +100,31 @@ Functions passed in the `routeMap` will be passed `args`, `query`, `hash`, and `
 Creating a router will return a React component that is used in your `render` function. The router can take 4 additional props:
 
 ```js
-<Router
-	scope={this}       // Used as the scope for the route mapping functions. Useful if your route mapping needs props or state
-	defaultUrl={'/'}   // When not being rendered on the browser, this defines what url it should use.
-	nested={true}      // Nesting routers can run into race conditions with events firing. If you have a router rendering another router, the child router should have the nested prop set as true
-	forceUrl={'/test'} // Always forces the given url
-/>
 
+const Router = CreateRouter({
+	'/' : ()=><main>Oh hello</main>
+});
+
+function MainComponent(){
+	return <Router
+		scope={this}       // Used as the scope for the route mapping functions. Useful if your route mapping needs props or state
+		serverSideUrl={'/'}   // When not being rendered on the browser, this defines what url it should use.
+	/>
+}
+```
+
+#### Nested Routers
+It's also possible to nest routers together
+
+```js
+const Subrouter = CreateRouter({
+	'/sub/test' : <div>I am a sub page</div>
+})
+
+const MainRouter = CreateRouter({
+	'/' : <main>Oh hello</main>,
+	'/sub(/*)' : <Subrouter />
+})
 ```
 
 
@@ -128,8 +142,12 @@ If you wish to force standard behaviour, eg. a page reload, pass the prop `force
 
 If you need to update the url using `history.pushState` you can use this. It will trigger the router to re-render. Pass `true` as the second parameter to force the browser to reload at the path given.
 
+Returns `true` if it was able to successfully re-route using the routers. Returns `false` if the passed in route wasn't handled or if it's not on the browser.
+
+
+
 ### `pico-router.onUrlChange(handler)`
-Adds two event listeners on the `window` object for `popstate` and `pico-router`'s internal url update event, `__historyChange`. Fires whenever the url updates either by the user (by navigating back), or by clicking a `pico-router` Link.
+Adds an event handler whenever `pico-router` handles a url change.
 
 ### `pico-router.removeListener(handler)`
-Removes the two event listeners on the `window` object.
+Removes the url change event handler.

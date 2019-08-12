@@ -1,17 +1,20 @@
 {
   "name": "pico-router",
-  "version": "4.0.0",
+  "version": "4.2.0",
   "description": "An incredibly tiny React router for isomorphic apps",
   "main": "pico-router.js",
   "scripts": {
     "test": "pico-check",
-    "test:dev": "pico-check -b -w"
+    "test:dev": "pico-check -b -w",
+    "dev": "node tests/test.server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stolksdorf/pico-router.git"
   },
-  "files": ["pico-router.js"],
+  "files": [
+    "pico-router.js"
+  ],
   "keywords": [
     "router",
     "react",
@@ -31,7 +34,13 @@
     "react": "^16.8.6"
   },
   "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "babelify": "^10.0.0",
+    "browserify": "^16.4.0",
+    "express": "^4.17.1",
     "pico-check": "^1.2.1",
+    "react-dom": "^16.8.6",
     "react-test-renderer": "^16.8.6"
   }
 }
