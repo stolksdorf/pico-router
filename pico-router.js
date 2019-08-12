@@ -12,9 +12,9 @@ const isRegularClick    = (event)=>event.button === 0 && !(event.metaKey || even
 const isExternalRoute   = (href)=>!!(href.match(/^https?\:/i) && !href.match(document.domain));
 const getUrl            = ()=>onBrowser ? window.location.pathname : ServerSideUrl;
 const UpdateRouters     = ()=>{
-	const res = routers.reduce((foundMatch, router)=>router.update(getUrl()) || foundMatch, false);
+	const routeIsHandled = routers.reduce((foundMatch, router)=>router.update(getUrl()) || foundMatch, false);
 	eventHandlers.map((fn)=>fn());
-	return res;
+	return routeIsHandled;
 };
 
 /* back-button event listener */
@@ -83,9 +83,7 @@ const CreateRouter = (routes, opts = {})=>{
 					return !!getMatch(routeMap, url);
 				},
 			});
-			return ()=>{
-				routers.splice(routers.findIndex((router)=>router.id === routerId), 1);
-			};
+			return ()=>routers = routers.filter((router)=>router.id !== routerId);
 		}, []);
 		return execute(url, scope);
 	};

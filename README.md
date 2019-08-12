@@ -1,5 +1,5 @@
 # 🔀 pico-router
-An incredibly tiny React router for isomorphic apps. **Under 110 lines of code**
+An incredibly tiny React router for isomorphic apps. **Under 100 lines of code**
 
 [![NPM](https://nodei.co/npm/pico-router.png)](https://nodei.co/npm/pico-router/)
 
@@ -12,7 +12,7 @@ As your project grows, it's easy to swap out to another more full-featured route
 * **Under 100 lines of code**
 * Very easy route -> function mapping
 * Uses [url-pattern](https://www.npmjs.com/package/url-pattern)-style url matching
-* Works on both client and server
+* Works on both client and server for server-side rendering
 * Uses history pushstate for instant page transitions
 * Included Link component (anchor tag replacement) to use history pushstate
 
@@ -23,7 +23,7 @@ As your project grows, it's easy to swap out to another more full-featured route
 
 
 ### Example main.jsx
-```jsx
+```js
 const React = require('react');
 const {CreateRouter, Link} = require('pico-router');
 
@@ -90,8 +90,7 @@ Functions passed in the `routeMap` will be passed `args`, `query`, `hash`, and `
 #### `opts`
 ```js
 {
-	// Will add this string at the front of each url
-	prefix : ''
+	prefix : '' // Will add this string at the front of each url
 }
 ```
 
@@ -101,11 +100,31 @@ Functions passed in the `routeMap` will be passed `args`, `query`, `hash`, and `
 Creating a router will return a React component that is used in your `render` function. The router can take 4 additional props:
 
 ```js
-<Router
-	scope={this}       // Used as the scope for the route mapping functions. Useful if your route mapping needs props or state
-	serverSideUrl={'/'}   // When not being rendered on the browser, this defines what url it should use.
-/>
 
+const Router = CreateRouter({
+	'/' : ()=><main>Oh hello</main>
+});
+
+function MainComponent(){
+	return <Router
+		scope={this}       // Used as the scope for the route mapping functions. Useful if your route mapping needs props or state
+		serverSideUrl={'/'}   // When not being rendered on the browser, this defines what url it should use.
+	/>
+}
+```
+
+#### Nested Routers
+It's also possible to nest routers together
+
+```js
+const Subrouter = CreateRouter({
+	'/sub/test' : <div>I am a sub page</div>
+})
+
+const MainRouter = CreateRouter({
+	'/' : <main>Oh hello</main>,
+	'/sub(/*)' : <Subrouter />
+})
 ```
 
 
