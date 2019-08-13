@@ -39,7 +39,7 @@ const Component = (props)=>{
 
 		<hr />
 
-		<MainRouter name='main' />
+		<MainRouter name='main' forceUrl={'/test'} />
 
 		<hr />
 
