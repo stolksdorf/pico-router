@@ -107,8 +107,9 @@ const Router = CreateRouter({
 
 function MainComponent(){
 	return <Router
-		scope={this}       // Used as the scope for the route mapping functions. Useful if your route mapping needs props or state
+		scope={this}          // Used as the scope for the route mapping functions. Useful if your route mapping needs props or state
 		serverSideUrl={'/'}   // When not being rendered on the browser, this defines what url it should use.
+		forceUrl={false}      // Always uses the passed in URL, no matter server or client side
 	/>
 }
 ```

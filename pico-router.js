@@ -71,7 +71,7 @@ const CreateRouter = (routes, opts = {})=>{
 		});
 	};
 
-	function RouterComponent({ scope = this, serverSideUrl = ServerSideUrl }){
+	function RouterComponent({ scope = this, serverSideUrl = ServerSideUrl, forceUrl = false }){
 		ServerSideUrl = serverSideUrl;
 		const [routerId] = React.useState(()=>Symbol());
 		const [url, setUrl] = React.useState(getUrl);
@@ -85,7 +85,7 @@ const CreateRouter = (routes, opts = {})=>{
 			});
 			return ()=>routers = routers.filter((router)=>router.id !== routerId);
 		}, []);
-		return execute(url, scope);
+		return execute(forceUrl || url, scope);
 	};
 
 	RouterComponent.execute = execute;
